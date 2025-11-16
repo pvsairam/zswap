@@ -3,11 +3,11 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { sepolia, mainnet } from '@reown/appkit/networks'
 import { cookieStorage, createStorage } from 'wagmi'
 
-// Get projectId from environment
+// Get projectId from environment (works with both variable names)
 export const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || process.env.NEXT_PUBLIC_REOWN_PROJECT_ID
 
 if (!projectId) {
-  throw new Error('NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID or NEXT_PUBLIC_REOWN_PROJECT_ID is required')
+  throw new Error('NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is required in environment variables')
 }
 
 // Create wagmi adapter
@@ -22,7 +22,7 @@ export const wagmiAdapter = new WagmiAdapter({
 
 export const config = wagmiAdapter.wagmiConfig
 
-// Metadata
+// Metadata for your app
 const metadata = {
   name: 'ZSwap',
   description: 'Privacy-focused DEX with FHE encryption',
@@ -30,7 +30,7 @@ const metadata = {
   icons: ['https://zswap.vercel.app/icon.png']
 }
 
-// Create the modal with Telegram support
+// Create the Reown AppKit modal (with Telegram support built-in)
 export const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
@@ -44,6 +44,6 @@ export const modal = createAppKit({
   },
   themeMode: 'dark',
   themeVariables: {
-    '--w3m-z-index': 9999
+    '--w3m-z-index': '9999'
   }
 })
