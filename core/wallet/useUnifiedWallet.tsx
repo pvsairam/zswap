@@ -58,17 +58,23 @@ export function UnifiedWalletProvider({ children }: { children: ReactNode }) {
         }
       }
       
+      // Detect if in Telegram to disable QR modal
+      const isTelegram = typeof window !== 'undefined' && (
+        (window as any).Telegram?.WebApp !== undefined ||
+        'TelegramWebviewProxy' in window
+      );
+
       const provider = await EthereumProvider.init({
         projectId,
         chains: [11155111],
         optionalChains: [1, 137],
-        showQrModal: true,
-        qrModalOptions: {
+        showQrModal: !isTelegram, // Disable QR modal in Telegram - wallets open externally
+        qrModalOptions: !isTelegram ? {
           themeMode: 'dark' as const,
           themeVariables: {
             '--wcm-z-index': '9999'
           }
-        },
+        } : undefined,
         methods: ['eth_sendTransaction', 'personal_sign', 'eth_signTypedData_v4'],
         events: ['chainChanged', 'accountsChanged'],
         metadata: {
