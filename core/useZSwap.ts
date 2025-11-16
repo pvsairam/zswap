@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useMetaMaskEthersSigner } from './metamask/useMetaMaskEthersSigner';
+import { useUnifiedWalletSigner } from './wallet/useUnifiedWalletSigner';
 import { ethers } from 'ethers';
 import { PrivateSwapPoolABI } from '../abi/PrivateSwapPoolABI';
 import { ZSwapSimpleABI } from '../abi/ZSwapSimpleABI';
@@ -10,7 +10,7 @@ import { EncryptedUSDTSimpleABI } from '../abi/EncryptedUSDTSimpleABI';
 import { CONTRACTS, getPoolKey } from '../config/contracts';
 
 export const useZSwap = () => {
-  const { ethersSigner: signer, ethersBrowserProvider: provider } = useMetaMaskEthersSigner();
+  const { ethersSigner: signer, ethersBrowserProvider: provider } = useUnifiedWalletSigner();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
