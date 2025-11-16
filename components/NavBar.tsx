@@ -5,10 +5,9 @@ import { useTelegram } from '../core/useTelegram';
 import { useState, useEffect } from 'react';
 import { Wallet, User, Crown, Shield } from 'lucide-react';
 import { RoughBorder } from './RoughBorder';
-import { Button } from './ui/button';
 
 export function NavBar() {
-  const { ethersSigner: signer, isConnected, connect } = useUnifiedWalletSigner();
+  const { ethersSigner: signer } = useUnifiedWalletSigner();
   const { user: telegramUser, isTelegramEnv } = useTelegram();
   const [walletAddress, setWalletAddress] = useState<string>('');
 
@@ -57,8 +56,8 @@ export function NavBar() {
               </RoughBorder>
             )}
             
-            {/* Wallet Connection */}
-            {isConnected && walletAddress ? (
+            {/* Wallet Address */}
+            {walletAddress && (
               <RoughBorder className="rounded-full" strokeWidth={2} roughness={1.2}>
                 <div className="flex items-center gap-2 px-3 py-2 glass-panel rounded-full" data-testid="wallet-info">
                   <Wallet className="h-4 w-4 text-secondary" />
@@ -67,19 +66,6 @@ export function NavBar() {
                     <span className="sm:hidden">{walletAddress.substring(0, 4)}...{walletAddress.substring(40)}</span>
                   </span>
                 </div>
-              </RoughBorder>
-            ) : (
-              <RoughBorder className="rounded-full" strokeWidth={2} roughness={1.2}>
-                <Button
-                  onClick={connect}
-                  variant="default"
-                  size="sm"
-                  className="rounded-full"
-                  data-testid="button-connect-wallet"
-                >
-                  <Wallet className="h-4 w-4 mr-2" />
-                  Connect Wallet
-                </Button>
               </RoughBorder>
             )}
             
