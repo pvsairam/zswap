@@ -1,0 +1,333 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/runner/workspace/contracts/core/ZSwapSimple.sol": {
+      "lastModificationDate": 1763193749521,
+      "contentHash": "634a9b271ecf571f67590cfbc4113f33",
+      "sourceName": "contracts/core/ZSwapSimple.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "ZSwapSimple"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/EncryptedBTC.sol": {
+      "lastModificationDate": 1763202697510,
+      "contentHash": "9bacf1f68793da935c428ced38df101f",
+      "sourceName": "contracts/tokens/EncryptedBTC.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "EncryptedBTC",
+        "IERC20"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/EncryptedETH.sol": {
+      "lastModificationDate": 1763202692471,
+      "contentHash": "42bcb60d0d2db2946f2508ddafcf3abb",
+      "sourceName": "contracts/tokens/EncryptedETH.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "EncryptedETH",
+        "IERC20"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/EncryptedUSDCSimple.sol": {
+      "lastModificationDate": 1763224455043,
+      "contentHash": "01695fa753aef4a755df6b534825cfba",
+      "sourceName": "contracts/tokens/EncryptedUSDCSimple.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "EncryptedUSDCSimple",
+        "IERC20"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/EncryptedUSDTSimple.sol": {
+      "lastModificationDate": 1763224478535,
+      "contentHash": "6aafe74760516f5cf98396e5df0c5156",
+      "sourceName": "contracts/tokens/EncryptedUSDTSimple.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "EncryptedUSDTSimple",
+        "IERC20"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/MockBTC.sol": {
+      "lastModificationDate": 1763202686950,
+      "contentHash": "0011fff23da80113fcee9fc2cc6398d1",
+      "sourceName": "contracts/tokens/MockBTC.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "MockBTC"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/MockETH.sol": {
+      "lastModificationDate": 1763202682735,
+      "contentHash": "4946c6a1308bed3007d02de6ad46ec4f",
+      "sourceName": "contracts/tokens/MockETH.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "MockETH"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/MockUSDC.sol": {
+      "lastModificationDate": 1763194425937,
+      "contentHash": "bc45f84c0b4a83c9ed4466774e78daa9",
+      "sourceName": "contracts/tokens/MockUSDC.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "MockUSDC"
+      ]
+    },
+    "/home/runner/workspace/contracts/tokens/MockUSDT.sol": {
+      "lastModificationDate": 1763194429617,
+      "contentHash": "5e19bc72a5d5a9bcaa47acddfc3ac5ad",
+      "sourceName": "contracts/tokens/MockUSDT.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "MockUSDT"
+      ]
+    }
+  }
+}

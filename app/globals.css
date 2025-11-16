@@ -1,0 +1,414 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Cosmic Sketch Theme: Parchment with cosmic gradients */
+    --background: 45 71% 96%; /* Parchment #fdf8ee */
+    --foreground: 244 47% 20%; /* Graphite #1e1b4b */
+    --card: 0 0% 100%; /* White for glass cards */
+    --card-foreground: 244 47% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 244 47% 20%;
+    
+    /* Primary: Bright cosmic blue #038aff */
+    --primary: 208 100% 51%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary: Teal/cyan #36f7d3 */
+    --secondary: 165 91% 59%;
+    --secondary-foreground: 244 47% 20%;
+    
+    /* Muted: Soft parchment */
+    --muted: 45 40% 92%;
+    --muted-foreground: 244 20% 40%;
+    
+    /* Accent: Orange CTA #ffb547 */
+    --accent: 35 100% 64%;
+    --accent-foreground: 244 47% 20%;
+    
+    /* Success: Teal */
+    --success: 165 70% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Destructive: Warm red */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Borders: Graphite sketch strokes */
+    --border: 244 47% 20%;
+    --input: 0 0% 100%;
+    --ring: 208 100% 51%;
+    
+    --radius: 0.75rem;
+    
+    /* Cosmic gradients */
+    --gradient-cosmic-start: 223 71% 5%; /* Navy #020617 */
+    --gradient-cosmic-mid: 208 100% 51%; /* Blue #038aff */
+    --gradient-cosmic-end: 165 91% 59%; /* Teal #36f7d3 */
+  }
+
+  .dark {
+    /* Dark mode: Cosmic navy with bright accents */
+    --background: 223 71% 5%; /* Cosmic navy #020617 */
+    --foreground: 165 91% 79%; /* Bright teal */
+    --card: 223 60% 8%; /* Slightly lighter navy */
+    --card-foreground: 165 91% 79%;
+    --popover: 223 60% 8%;
+    --popover-foreground: 165 91% 79%;
+    
+    --primary: 208 100% 60%; /* Brighter blue */
+    --primary-foreground: 223 71% 5%;
+    
+    --secondary: 165 91% 59%; /* Teal */
+    --secondary-foreground: 223 71% 5%;
+    
+    --muted: 223 50% 12%;
+    --muted-foreground: 165 40% 65%;
+    
+    --accent: 35 100% 68%; /* Bright orange */
+    --accent-foreground: 223 71% 5%;
+    
+    --success: 165 75% 55%;
+    --success-foreground: 223 71% 5%;
+    
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 165 91% 59%;
+    --input: 223 60% 8%;
+    --ring: 208 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    /* Paper texture background */
+    background-image: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='4' /%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    font-family: var(--font-patrick), 'Patrick Hand', cursive, system-ui;
+  }
+  
+  /* All headings use Patrick Hand */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-patrick), 'Patrick Hand', cursive, system-ui;
+    font-weight: 400;
+  }
+}
+
+/* Hand-Drawn Utilities */
+@layer utilities {
+  /* Cosmic gradient backgrounds */
+  .bg-cosmic-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-cosmic-start)) 0%,
+      hsl(var(--gradient-cosmic-mid)) 50%,
+      hsl(var(--gradient-cosmic-end)) 100%
+    );
+  }
+  
+  .bg-cosmic-radial {
+    background: radial-gradient(
+      ellipse at top,
+      hsl(var(--gradient-cosmic-mid) / 0.3) 0%,
+      transparent 50%
+    );
+  }
+  
+  /* Glass effect (frosted glass backdrop) */
+  .glass-card {
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  .glass-panel {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  /* Dark mode glass improvements - better contrast */
+  .dark .glass-card {
+    background: hsl(var(--card) / 0.9);
+  }
+  
+  .dark .glass-panel {
+    background: hsl(var(--card) / 0.7);
+  }
+  
+  /* Sketch hover effect - subtle wobble */
+  .hover-sketch {
+    transition: all 180ms ease-out;
+  }
+  
+  .hover-sketch:hover {
+    transform: translateY(-2px) rotate(-0.5deg);
+  }
+  
+  /* Active state - press down */
+  .active-sketch {
+    transition: all 120ms ease-out;
+  }
+  
+  .active-sketch:active {
+    transform: scale(0.98) rotate(0.3deg);
+  }
+  
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Accent font (for handwritten elements) */
+  .font-accent {
+    font-family: var(--font-patrick), 'Patrick Hand', cursive;
+  }
+  
+  /* Hero text - handwritten */
+  .text-hero {
+    @apply text-5xl md:text-6xl leading-tight tracking-tight;
+    font-family: var(--font-patrick), 'Patrick Hand', cursive, system-ui;
+    font-weight: 400;
+  }
+  
+  /* Section headings */
+  .text-section {
+    @apply text-3xl md:text-4xl leading-tight;
+    font-family: var(--font-patrick), 'Patrick Hand', cursive, system-ui;
+    font-weight: 400;
+  }
+  
+  /* Card headers */
+  .text-card-header {
+    @apply text-xl md:text-2xl leading-tight;
+    font-family: var(--font-patrick), 'Patrick Hand', cursive, system-ui;
+    font-weight: 400;
+  }
+}
+
+/* Sketch Shadow System */
+@layer utilities {
+  /* Simple offset shadows for ink sketch effect */
+  .shadow-sketch {
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.3);
+  }
+  
+  .shadow-sketch-md {
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.4);
+  }
+  
+  .shadow-sketch-lg {
+    box-shadow: 4px 4px 0 hsl(var(--border) / 0.5);
+  }
+  
+  /* Dark mode: lighter shadows */
+  .dark .shadow-sketch {
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.2);
+  }
+  
+  .dark .shadow-sketch-md {
+    box-shadow: 
+      3px 3px 0 hsl(var(--border) / 0.2),
+      6px 6px 0 hsl(var(--border) / 0.12);
+  }
+  
+  .dark .shadow-sketch-lg {
+    box-shadow: 
+      4px 4px 0 hsl(var(--border) / 0.25),
+      8px 8px 0 hsl(var(--border) / 0.15),
+      12px 12px 0 hsl(var(--border) / 0.08);
+  }
+}
+
+/* Hand-Drawn Card Variants */
+@layer components {
+  /* Default sketch card - light background with sketchy border */
+  .card-sketch {
+    @apply rounded-lg transition-all duration-200 ease-out;
+    @apply bg-card text-card-foreground;
+    border: 2px solid hsl(var(--border));
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.3);
+  }
+  
+  .card-sketch:hover {
+    transform: translateY(-2px) rotate(-0.5deg);
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.4);
+  }
+  
+  /* Primary card - filled background */
+  .card-primary {
+    @apply rounded-lg transition-all duration-200 ease-out;
+    @apply bg-card text-card-foreground;
+    border: 2px solid hsl(var(--border));
+    box-shadow: 2px 2px 0 hsl(var(--primary) / 0.3);
+  }
+  
+  .card-primary:hover {
+    transform: translateY(-2px) rotate(0.5deg);
+    box-shadow: 3px 3px 0 hsl(var(--primary) / 0.4);
+  }
+  
+  /* Secondary card - dashed sketch style */
+  .card-secondary {
+    @apply rounded-lg transition-all duration-200 ease-out;
+    @apply bg-transparent text-foreground;
+    border: 2px dashed hsl(var(--border) / 0.6);
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.2);
+  }
+  
+  .card-secondary:hover {
+    transform: translateY(-1px) rotate(-0.3deg);
+    border-color: hsl(var(--border));
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.3);
+  }
+  
+  /* Black card - dark sketch card */
+  .card-black {
+    @apply rounded-lg transition-all duration-200 ease-out;
+    background-color: hsl(var(--card-sketch));
+    color: hsl(var(--card-sketch-foreground));
+    border: 2px solid hsl(var(--border));
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.3);
+  }
+  
+  .card-black:hover {
+    transform: translateY(-3px) rotate(0.5deg);
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.4);
+  }
+  
+  /* Hero card - larger offset shadow */
+  .card-hero {
+    @apply rounded-xl transition-all duration-300 ease-out;
+    @apply bg-card text-card-foreground;
+    border: 3px solid hsl(var(--border));
+    box-shadow: 4px 4px 0 hsl(var(--border) / 0.4);
+  }
+  
+  .card-hero:hover {
+    transform: translateY(-4px) rotate(-0.8deg);
+    box-shadow: 5px 5px 0 hsl(var(--border) / 0.5);
+  }
+  
+  /* Float variant - same as sketch but for compatibility */
+  .card-float {
+    @apply card-sketch;
+  }
+}
+
+/* Hand-Drawn Button Enhancements */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground;
+    @apply rounded-lg px-8 h-12;
+    @apply transition-all duration-200;
+    border: 2px solid hsl(var(--border));
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.4);
+    font-weight: 400;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px) rotate(-0.5deg);
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.5);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(1px) rotate(0.3deg) scale(0.98);
+    box-shadow: 1px 1px 0 hsl(var(--border) / 0.3);
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-border bg-transparent text-foreground;
+    @apply rounded-lg px-8 h-12;
+    @apply transition-all duration-200;
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.3);
+    font-weight: 400;
+  }
+  
+  .btn-secondary:hover {
+    transform: translateY(-1px) rotate(0.3deg);
+    @apply bg-muted;
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.4);
+  }
+  
+  .btn-icon {
+    @apply w-10 h-10 rounded-lg;
+    @apply transition-all duration-200;
+    border: 2px solid hsl(var(--border));
+    box-shadow: 2px 2px 0 hsl(var(--border) / 0.2);
+  }
+  
+  .btn-icon:hover {
+    transform: translateY(-2px) rotate(-3deg);
+    box-shadow: 3px 3px 0 hsl(var(--border) / 0.3);
+  }
+}
+
+/* Hand-Drawn Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) rotate(-1deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes wobble {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(0.5deg);
+  }
+  75% {
+    transform: rotate(-0.5deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-wobble {
+  animation: wobble 2s ease-in-out infinite;
+}
+
+/* Sketch loading skeleton */
+@layer utilities {
+  .skeleton {
+    @apply bg-muted rounded;
+    border: 1px dashed hsl(var(--border));
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+/* Custom scrollbar - sketch style */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-left: 2px dashed hsl(var(--border));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.4);
+  border-radius: 6px;
+  border: 2px solid hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.6);
+}

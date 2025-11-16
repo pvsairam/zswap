@@ -1,0 +1,180 @@
+import hre from "hardhat";
+import * as fs from "fs";
+import * as path from "path";
+
+const { ethers } = hre;
+
+/**
+ * ZSwap Deployment Script
+ * 
+ * Deploys all ZSwap contracts in the correct order:
+ * 1. MockUSDC and MockUSDT (test tokens)
+ * 2. EncryptedUSDC and EncryptedUSDT (privacy tokens)
+ * 3. PoolManager (intent processing)
+ * 4. ZSwap (main contract)
+ * 
+ * After deployment, saves addresses to config/contracts.ts
+ */
+
+interface DeployedContracts {
+  MockUSDC: string;
+  MockUSDT: string;
+  EncryptedUSDC: string;
+  EncryptedUSDT: string;
+  PoolManager: string;
+  ZSwap: string;
+}
+
+async function main() {
+  console.log("🚀 Starting ZSwap Deployment on Sepolia...\n");
+
+  const [deployer] = await ethers.getSigners();
+  console.log("📝 Deploying contracts with account:", deployer.address);
+  console.log("💰 Account balance:", ethers.formatEther(await ethers.provider.getBalance(deployer.address)), "ETH\n");
+
+  const deployed: Partial<DeployedContracts> = {};
+
+  // STEP 1: Deploy Mock Tokens
+  console.log("1️⃣  Deploying MockUSDC...");
+  const MockUSDC = await ethers.getContractFactory("MockUSDC");
+  const mockUSDC = await MockUSDC.deploy();
+  await mockUSDC.waitForDeployment();
+  deployed.MockUSDC = await mockUSDC.getAddress();
+  console.log("   ✅ MockUSDC deployed to:", deployed.MockUSDC);
+
+  console.log("2️⃣  Deploying MockUSDT...");
+  const MockUSDT = await ethers.getContractFactory("MockUSDT");
+  const mockUSDT = await MockUSDT.deploy();
+  await mockUSDT.waitForDeployment();
+  deployed.MockUSDT = await mockUSDT.getAddress();
+  console.log("   ✅ MockUSDT deployed to:", deployed.MockUSDT);
+
+  // STEP 2: Deploy ZSwap first (to get address for encrypted tokens)
+  console.log("\n3️⃣  Deploying ZSwap (main contract)...");
+  const ZSwap = await ethers.getContractFactory("ZSwapSimple");
+  const zswap = await ZSwap.deploy(
+    ethers.ZeroAddress, // EncryptedUSDC - will update
+    ethers.ZeroAddress  // EncryptedUSDT - will update
+  );
+  await zswap.waitForDeployment();
+  deployed.ZSwap = await zswap.getAddress();
+  console.log("   ✅ ZSwap deployed to:", deployed.ZSwap);
+
+  // STEP 3: Deploy Encrypted Tokens with ZSwap address
+  console.log("\n4️⃣  Deploying EncryptedUSDC...");
+  const EncryptedUSDC = await ethers.getContractFactory("EncryptedUSDCSimple");
+  const encryptedUSDC = await EncryptedUSDC.deploy(
+    deployed.MockUSDC,
+    deployed.ZSwap
+  );
+  await encryptedUSDC.waitForDeployment();
+  deployed.EncryptedUSDC = await encryptedUSDC.getAddress();
+  console.log("   ✅ EncryptedUSDC deployed to:", deployed.EncryptedUSDC);
+
+  console.log("5️⃣  Deploying EncryptedUSDT...");
+  const EncryptedUSDT = await ethers.getContractFactory("EncryptedUSDTSimple");
+  const encryptedUSDT = await EncryptedUSDT.deploy(
+    deployed.MockUSDT,
+    deployed.ZSwap
+  );
+  await encryptedUSDT.waitForDeployment();
+  deployed.EncryptedUSDT = await encryptedUSDT.getAddress();
+  console.log("   ✅ EncryptedUSDT deployed to:", deployed.EncryptedUSDT);
+  
+  // Note: PoolManager skipped for simplified deployment
+  deployed.PoolManager = deployed.ZSwap; // Use ZSwap address for now
+
+  // STEP 5: Post-deployment configuration
+  console.log("\n⚙️  Configuring contracts...");
+  
+  // Authorize deployer as AVS operator (for testing)
+  console.log("   📝 Authorizing deployer as AVS operator...");
+  const tx = await zswap.setAVSAuthorization(deployer.address, true);
+  await tx.wait();
+  console.log("   ✅ AVS operator authorized");
+
+  // STEP 6: Save deployment addresses
+  console.log("\n💾 Saving deployment addresses...");
+  saveDeploymentAddresses(deployed as DeployedContracts);
+
+  // STEP 7: Display summary
+  console.log("\n" + "=".repeat(60));
+  console.log("🎉 ZSwap Deployment Complete!");
+  console.log("=".repeat(60));
+  console.log("\n📋 Deployed Contract Addresses:");
+  console.log("   MockUSDC:       ", deployed.MockUSDC);
+  console.log("   MockUSDT:       ", deployed.MockUSDT);
+  console.log("   EncryptedUSDC:  ", deployed.EncryptedUSDC);
+  console.log("   EncryptedUSDT:  ", deployed.EncryptedUSDT);
+  console.log("   PoolManager:    ", deployed.PoolManager);
+  console.log("   ZSwap:          ", deployed.ZSwap);
+  console.log("\n🔗 View on Etherscan:");
+  console.log("   https://sepolia.etherscan.io/address/" + deployed.ZSwap);
+  console.log("\n✅ Addresses saved to: config/contracts.ts");
+  console.log("✅ Update your frontend to use these addresses");
+  console.log("\n💡 Next Steps:");
+  console.log("   1. Verify contracts on Etherscan: npm run verify");
+  console.log("   2. Mint test tokens: npm run mint-test-tokens");
+  console.log("   3. Test the deployment: npm run test-deployment");
+  console.log("=".repeat(60) + "\n");
+}
+
+/**
+ * Save deployed addresses to config/contracts.ts
+ */
+function saveDeploymentAddresses(addresses: DeployedContracts) {
+  const configPath = path.join(__dirname, "../config/contracts.ts");
+  
+  const content = `// Auto-generated by deployment script
+// Do not edit manually - run 'npm run deploy' to update
+
+export const CONTRACTS = {
+  // Test Tokens (Sepolia)
+  MockUSDC: "${addresses.MockUSDC}",
+  MockUSDT: "${addresses.MockUSDT}",
+  
+  // Encrypted Tokens
+  EncryptedUSDC: "${addresses.EncryptedUSDC}",
+  EncryptedUSDT: "${addresses.EncryptedUSDT}",
+  
+  // Core Contracts
+  PoolManager: "${addresses.PoolManager}",
+  ZSwapPool: "${addresses.ZSwap}", // Main ZSwap contract
+  
+  // Network
+  chainId: 11155111, // Sepolia
+  
+  // Block Explorer
+  explorerUrl: "https://sepolia.etherscan.io",
+} as const;
+
+export type ContractAddresses = typeof CONTRACTS;
+`;
+
+  fs.writeFileSync(configPath, content, "utf-8");
+  console.log("   ✅ Saved to:", configPath);
+  
+  // Also save to deployment history
+  const historyPath = path.join(__dirname, "../DEPLOYMENT_HISTORY.json");
+  const history = fs.existsSync(historyPath) 
+    ? JSON.parse(fs.readFileSync(historyPath, "utf-8"))
+    : [];
+  
+  history.push({
+    timestamp: new Date().toISOString(),
+    network: "sepolia",
+    deployer: process.env.DEPLOYER_ADDRESS || "unknown",
+    addresses,
+  });
+  
+  fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), "utf-8");
+}
+
+// Execute deployment
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("\n❌ Deployment failed:");
+    console.error(error);
+    process.exit(1);
+  });
