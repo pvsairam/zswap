@@ -47,8 +47,5 @@ export const modal = createAppKit({
   themeMode: 'dark',
   themeVariables: {
     '--w3m-z-index': '9999'
-  },
-  // Disable all external service calls
-  enableAnalytics: false,
-  allWallets: 'HIDE' // Only show popular wallets, faster loading
+  }
 })
