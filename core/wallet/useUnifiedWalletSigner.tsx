@@ -1,21 +1,36 @@
-import { useState, useEffect, useRef } from "react";
+"use client";
+
 import { ethers } from "ethers";
 import { useReownWallet } from "./useReownWallet";
-import { useAccount } from "wagmi";
+import {
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-export function useUnifiedWalletSigner() {
-  const { 
-    provider, 
-    signer, 
-    connect, 
-    disconnect, 
-    chainId, 
-    address, 
-    isConnected,
-    connector
-  } = useReownWallet();
+export interface UseUnifiedWalletSignerState {
+  provider: ethers.Eip1193Provider | undefined;
+  chainId: number | undefined;
+  accounts: string[] | undefined;
+  isConnected: boolean;
+  error: Error | undefined;
+  connect: (walletType?: 'metamask' | 'walletconnect') => Promise<void>;
+  disconnect: () => Promise<void>;
+  sameChain: RefObject<(chainId: number | undefined) => boolean>;
+  sameSigner: RefObject<
+    (ethersSigner: ethers.JsonRpcSigner | undefined) => boolean
+  >;
+  ethersBrowserProvider: ethers.BrowserProvider | undefined;
+  ethersReadonlyProvider: ethers.ContractRunner | undefined;
+  ethersSigner: ethers.JsonRpcSigner | undefined;
+  walletType: 'metamask' | 'walletconnect' | undefined;
+}
 
-  const [eip1193Provider, setEip1193Provider] = useState<any>(undefined);
+export function useUnifiedWalletSigner(): UseUnifiedWalletSignerState {
+  const { address, chainId, isConnected, provider, signer, connector, connect, disconnect } = useReownWallet();
+  const accounts = address ? [address] : undefined;
+  const [eip1193Provider, setEip1193Provider] = useState<ethers.Eip1193Provider | undefined>(undefined);
   const [ethersReadonlyProvider, setEthersReadonlyProvider] = useState<
     ethers.ContractRunner | undefined
   >(undefined);
@@ -66,10 +81,10 @@ export function useUnifiedWalletSigner() {
       }
 
       try {
-        const rawProvider = await connector.getProvider();
-        setEip1193Provider(rawProvider);
+        const underlyingProvider = await connector.getProvider();
+        setEip1193Provider(underlyingProvider as ethers.Eip1193Provider);
       } catch (error) {
-        console.error("Failed to get EIP-1193 provider:", error);
+        console.error('Failed to get EIP-1193 provider:', error);
         setEip1193Provider(undefined);
       }
     }
@@ -78,15 +93,11 @@ export function useUnifiedWalletSigner() {
   }, [connector]);
 
   useEffect(() => {
-    if (!chainId) {
-      setEthersReadonlyProvider(undefined);
-      return;
-    }
-
-    if (signer) {
-      setEthersReadonlyProvider(signer);
-    } else {
-      const readonlyProvider = ethers.getDefaultProvider(chainId);
+    const rpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || 
+      (chainId === 11155111 ? 'https://rpc.sepolia.org' : undefined);
+    
+    if (rpcUrl) {
+      const readonlyProvider = new ethers.JsonRpcProvider(rpcUrl, chainId);
       setEthersReadonlyProvider(readonlyProvider);
     }
   }, [chainId]);
@@ -94,7 +105,7 @@ export function useUnifiedWalletSigner() {
   return {
     provider: eip1193Provider,
     chainId,
-    accounts: address ? [address] : [],
+    accounts,
     isConnected,
     error: undefined,
     connect: async (requestedWalletType) => {
