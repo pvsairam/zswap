@@ -30,7 +30,7 @@ const metadata = {
   icons: ['https://zswap.vercel.app/icon.png']
 }
 
-// Create the modal
+// Create the modal with analytics DISABLED for Telegram compatibility
 export const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
@@ -38,12 +38,17 @@ export const modal = createAppKit({
   defaultNetwork: sepolia,
   metadata: metadata,
   features: {
-    analytics: true,
+    analytics: false,  // CRITICAL: Disable analytics to prevent CORS blocking
     email: false,
     socials: false,
+    swaps: false,
+    onramp: false
   },
   themeMode: 'dark',
   themeVariables: {
     '--w3m-z-index': '9999'
-  }
+  },
+  // Disable all external service calls
+  enableAnalytics: false,
+  allWallets: 'HIDE' // Only show popular wallets, faster loading
 })
