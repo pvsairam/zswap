@@ -17,7 +17,7 @@ export function useReownWallet() {
   const provider = useMemo(() => {
     if (!walletClient) return undefined;
     
-    // Return EIP-1193 compatible provider
+    // Return EIP-1193 compatible provider for ethers.js
     return {
       request: async ({ method, params }: { method: string; params?: any[] }) => {
         if (!walletClient) throw new Error('Wallet not connected');
@@ -54,14 +54,19 @@ export function useReownWallet() {
     };
   }, [walletClient, address, chain]);
 
+  const accounts = useMemo(() => {
+    return address ? [address] : [];
+  }, [address]);
+
   return {
     provider,
     address,
+    accounts,
     isConnected,
     chainId: chain?.id,
     connect,
     disconnect,
-    walletType: isConnected ? 'reown' as const : undefined,
+    walletType: isConnected ? 'walletconnect' as const : undefined,
     error: undefined,
   };
 }
