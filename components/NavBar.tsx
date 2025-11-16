@@ -1,13 +1,13 @@
 "use client";
 
-import { useMetaMaskEthersSigner } from '../core/metamask/useMetaMaskEthersSigner';
+import { useUnifiedWalletSigner } from '../core/wallet/useUnifiedWalletSigner';
 import { useTelegram } from '../core/useTelegram';
 import { useState, useEffect } from 'react';
 import { Wallet, User, Crown, Shield } from 'lucide-react';
 import { RoughBorder } from './RoughBorder';
 
 export function NavBar() {
-  const { ethersSigner: signer } = useMetaMaskEthersSigner();
+  const { ethersSigner: signer } = useUnifiedWalletSigner();
   const { user: telegramUser, isTelegramEnv } = useTelegram();
   const [walletAddress, setWalletAddress] = useState<string>('');
 
