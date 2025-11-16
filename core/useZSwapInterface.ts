@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useZSwap } from './useZSwap';
-import { useMetaMaskEthersSigner } from './metamask/useMetaMaskEthersSigner';
+import { useUnifiedWalletSigner } from './wallet/useUnifiedWalletSigner';
 import { useFhevm } from '../fhevm/useFhevm';
 import { useInMemoryStorage } from './useInMemoryStorage';
 import { CONTRACTS } from '../config/contracts';
@@ -106,7 +106,7 @@ export interface ZSwapInterfaceState {
  * Handlers (with encryption + toasts) remain in components for now.
  */
 export function useZSwapInterface(): ZSwapInterfaceState {
-  const { ethersSigner: signer, isConnected, connect, provider, chainId } = useMetaMaskEthersSigner();
+  const { ethersSigner: signer, isConnected, connect, provider, chainId } = useUnifiedWalletSigner();
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
   
   const { storage: fhevmDecryptionSignatureStorage } = useInMemoryStorage();
