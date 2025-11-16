@@ -1,58 +1,63 @@
 "use client";
 
-import { useAccount, useDisconnect, useWalletClient } from 'wagmi';
-import { useAppKit } from '@reown/appkit/react';
-import { useMemo } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useCallback, useEffect, useState } from 'react';
+import { BrowserProvider, JsonRpcSigner } from 'ethers';
+import { modal } from '@/config/wagmi';
 
 export function useReownWallet() {
-  const { address, isConnected, chain } = useAccount();
+  const { address, isConnected, chainId, connector } = useAccount();
   const { disconnect } = useDisconnect();
-  const { open } = useAppKit();
-  const { data: walletClient } = useWalletClient();
+  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
 
-  const connect = async () => {
-    await open();
-  };
+  // Convert wagmi connector to ethers signer using real EIP-1193 provider
+  useEffect(() => {
+    async function getEthersSigner() {
+      if (!connector || !isConnected) {
+        setSigner(null);
+        setProvider(null);
+        return;
+      }
 
-  // Create EIP-1193 compatible provider from walletClient
-  const provider = useMemo(() => {
-    if (!walletClient?.transport) return undefined;
+      try {
+        // Get the real EIP-1193 provider from connector
+        const eip1193Provider = await connector.getProvider();
+        
+        // Create ethers provider from EIP-1193 provider
+        const ethersProvider = new BrowserProvider(eip1193Provider as any);
+        const ethersSigner = await ethersProvider.getSigner();
+        
+        setProvider(ethersProvider);
+        setSigner(ethersSigner);
+      } catch (error) {
+        console.error('Failed to get ethers signer:', error);
+        setSigner(null);
+        setProvider(null);
+      }
+    }
 
-    // The walletClient already has the transport which is EIP-1193 compatible
-    // We just need to expose it properly
-    return {
-      request: async ({ method, params }: { method: string; params?: any[] }) => {
-        if (!walletClient) throw new Error('Wallet not connected');
+    getEthersSigner();
+  }, [connector, isConnected]);
 
-        // Use walletClient.request which forwards to the underlying provider
-        return await walletClient.request({ method, params } as any);
-      },
-      // These are required for ethers.js compatibility
-      on: (event: string, listener: any) => {
-        // Event listeners are handled by wagmi hooks
-      },
-      removeListener: (event: string, listener: any) => {
-        // Event listeners are handled by wagmi hooks
-      },
-      // Support legacy providers
-      get isMetaMask() { return false; },
-      get isConnected() { return isConnected; },
-    };
-  }, [walletClient, isConnected]);
-
-  const accounts = useMemo(() => {
-    return address ? [address] : [];
-  }, [address]);
+  const connect = useCallback(async () => {
+    try {
+      // Open Reown AppKit modal
+      await modal.open();
+    } catch (error) {
+      console.error('Failed to open wallet modal:', error);
+      throw error;
+    }
+  }, []);
 
   return {
-    provider,
     address,
-    accounts,
     isConnected,
-    chainId: chain?.id,
+    chainId,
+    signer,
+    provider,
+    connector,
     connect,
     disconnect,
-    walletType: isConnected ? 'walletconnect' as const : undefined,
-    error: undefined,
   };
 }
