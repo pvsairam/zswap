@@ -1,49 +1,28 @@
-"use client";
-
+import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import { useReownWallet } from "./useReownWallet";
-import {
-  createContext,
-  ReactNode,
-  RefObject,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useAccount } from "wagmi";
 
-export interface UseUnifiedWalletSignerState {
-  provider: ethers.Eip1193Provider | undefined;
-  chainId: number | undefined;
-  accounts: string[] | undefined;
-  isConnected: boolean;
-  error: Error | undefined;
-  connect: (walletType?: 'metamask' | 'walletconnect') => Promise<void>;
-  disconnect: () => Promise<void>;
-  sameChain: RefObject<(chainId: number | undefined) => boolean>;
-  sameSigner: RefObject<
-    (ethersSigner: ethers.JsonRpcSigner | undefined) => boolean
-  >;
-  ethersBrowserProvider: ethers.BrowserProvider | undefined;
-  ethersReadonlyProvider: ethers.ContractRunner | undefined;
-  ethersSigner: ethers.JsonRpcSigner | undefined;
-  walletType: 'metamask' | 'walletconnect' | undefined;
-}
+export function useUnifiedWalletSigner() {
+  const { 
+    provider, 
+    signer, 
+    connect, 
+    disconnect, 
+    chainId, 
+    address, 
+    isConnected,
+    connector
+  } = useReownWallet();
 
-function useUnifiedWalletSignerInternal(): UseUnifiedWalletSignerState {
-  const { provider, chainId, accounts, isConnected, connect, disconnect, error, walletType } = useReownWallet();
-  const [ethersSigner, setEthersSigner] = useState<
-    ethers.JsonRpcSigner | undefined
-  >(undefined);
-  const [ethersBrowserProvider, setEthersBrowserProvider] = useState<
-    ethers.BrowserProvider | undefined
-  >(undefined);
+  const [eip1193Provider, setEip1193Provider] = useState<any>(undefined);
   const [ethersReadonlyProvider, setEthersReadonlyProvider] = useState<
     ethers.ContractRunner | undefined
   >(undefined);
 
   const chainIdRef = useRef<number | undefined>(chainId);
-  const ethersSignerRef = useRef<ethers.JsonRpcSigner | undefined>(undefined);
+  const ethersSignerRef = useRef<ethers.JsonRpcSigner | undefined | null>(null);
+  const [walletType, setWalletType] = useState<'metamask' | 'walletconnect' | undefined>(undefined);
 
   const sameChain = useRef((chainId: number | undefined) => {
     return chainId === chainIdRef.current;
@@ -57,72 +36,76 @@ function useUnifiedWalletSignerInternal(): UseUnifiedWalletSignerState {
 
   useEffect(() => {
     chainIdRef.current = chainId;
-  }, [chainId]);
+    ethersSignerRef.current = signer || undefined;
+  }, [chainId, signer]);
 
   useEffect(() => {
-    if (
-      !provider ||
-      !chainId ||
-      !isConnected ||
-      !accounts ||
-      accounts.length === 0
-    ) {
-      ethersSignerRef.current = undefined;
-      setEthersSigner(undefined);
-      setEthersBrowserProvider(undefined);
+    if (!connector) {
+      setWalletType(undefined);
+      return;
+    }
+
+    const connectorId = connector.id?.toLowerCase() || '';
+    const connectorName = connector.name?.toLowerCase() || '';
+    
+    if (connectorId.includes('metamask') || connectorName.includes('metamask') || 
+        connectorId.includes('injected') || connectorName.includes('injected')) {
+      setWalletType('metamask');
+    } else if (connectorId.includes('walletconnect') || connectorName.includes('walletconnect')) {
+      setWalletType('walletconnect');
+    } else {
+      setWalletType(undefined);
+    }
+  }, [connector]);
+
+  useEffect(() => {
+    async function getEip1193Provider() {
+      if (!connector) {
+        setEip1193Provider(undefined);
+        return;
+      }
+
+      try {
+        const rawProvider = await connector.getProvider();
+        setEip1193Provider(rawProvider);
+      } catch (error) {
+        console.error("Failed to get EIP-1193 provider:", error);
+        setEip1193Provider(undefined);
+      }
+    }
+
+    getEip1193Provider();
+  }, [connector]);
+
+  useEffect(() => {
+    if (!chainId) {
       setEthersReadonlyProvider(undefined);
       return;
     }
 
-    console.warn(`[useUnifiedWalletSignerInternal] create new ethers.BrowserProvider(), chainId=${chainId}, wallet=${walletType}`);
-
-    const browserProvider = new ethers.BrowserProvider(provider, chainId);
-    setEthersBrowserProvider(browserProvider);
-
-    browserProvider.getSigner().then((signer) => {
-      ethersSignerRef.current = signer;
-      setEthersSigner(signer);
-    });
-
-    const rpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || 
-      (chainId === 11155111 ? 'https://rpc.sepolia.org' : undefined);
-    
-    const readonlyProvider = new ethers.JsonRpcProvider(rpcUrl, chainId);
-    setEthersReadonlyProvider(readonlyProvider);
-  }, [provider, chainId, isConnected, accounts, walletType]);
+    if (signer) {
+      setEthersReadonlyProvider(signer);
+    } else {
+      const readonlyProvider = ethers.getDefaultProvider(chainId);
+      setEthersReadonlyProvider(readonlyProvider);
+    }
+  }, [chainId]);
 
   return {
-    provider,
+    provider: eip1193Provider,
     chainId,
-    accounts,
+    accounts: address ? [address] : [],
     isConnected,
-    error,
-    connect,
-    disconnect,
+    error: undefined,
+    connect: async (requestedWalletType) => {
+      await connect();
+    },
+    disconnect: async () => disconnect(),
     sameChain,
     sameSigner,
-    ethersBrowserProvider,
+    ethersBrowserProvider: provider || undefined,
     ethersReadonlyProvider,
-    ethersSigner,
+    ethersSigner: signer || undefined,
     walletType,
   };
-}
-
-const UnifiedWalletSignerContext = createContext<UseUnifiedWalletSignerState | undefined>(undefined);
-
-export function UnifiedWalletSignerProvider({ children }: { children: ReactNode }) {
-  const props = useUnifiedWalletSignerInternal();
-  return (
-    <UnifiedWalletSignerContext.Provider value={props}>
-      {children}
-    </UnifiedWalletSignerContext.Provider>
-  );
-}
-
-export function useUnifiedWalletSigner() {
-  const context = useContext(UnifiedWalletSignerContext);
-  if (context === undefined) {
-    throw new Error("useUnifiedWalletSigner must be used within a UnifiedWalletSignerProvider");
-  }
-  return context;
 }
