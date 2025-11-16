@@ -7,7 +7,7 @@ import { MockERC20ABI } from '../abi/MockERC20ABI';
 import { HybridFHERC20ABI } from '../abi/HybridFHERC20ABI';
 import { EncryptedUSDCSimpleABI } from '../abi/EncryptedUSDCSimpleABI';
 import { EncryptedUSDTSimpleABI } from '../abi/EncryptedUSDTSimpleABI';
-import { CONTRACTS, getPoolKey } from '../config/contracts';
+import { CONTRACTS } from '../config/contracts';
 
 export const useZSwap = () => {
   const { ethersSigner: signer, ethersBrowserProvider: provider } = useUnifiedWalletSigner();
