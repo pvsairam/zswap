@@ -276,6 +276,21 @@ export function ZSwapSimple() {
             )}
           </div>
         );
+        
+        setTimeout(() => {
+          toast(
+            <div className="text-sm">
+              <div className="font-medium mb-1">⏳ Swap Pending</div>
+              <div className="text-xs text-muted-foreground">
+                Your swap is waiting in a batch. Balances update after batch settlement.
+              </div>
+            </div>,
+            {
+              duration: 8000,
+              icon: 'ℹ️',
+            }
+          );
+        }, 1000);
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to submit intent');
