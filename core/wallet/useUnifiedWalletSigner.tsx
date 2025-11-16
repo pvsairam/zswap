@@ -1,7 +1,7 @@
 "use client";
 
 import { ethers } from "ethers";
-import { useUnifiedWallet } from "./useUnifiedWallet";
+import { useReownWallet } from "./useReownWallet";
 import {
   createContext,
   ReactNode,
@@ -31,7 +31,7 @@ export interface UseUnifiedWalletSignerState {
 }
 
 function useUnifiedWalletSignerInternal(): UseUnifiedWalletSignerState {
-  const { provider, chainId, accounts, isConnected, connect, disconnect, error, walletType } = useUnifiedWallet();
+  const { provider, chainId, accounts, isConnected, connect, disconnect, error, walletType } = useReownWallet();
   const [ethersSigner, setEthersSigner] = useState<
     ethers.JsonRpcSigner | undefined
   >(undefined);
