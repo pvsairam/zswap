@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useZSwap } from '../core/useZSwap';
-import { useMetaMaskEthersSigner } from '../core/metamask/useMetaMaskEthersSigner';
+import { useUnifiedWalletSigner } from '../core/wallet/useUnifiedWalletSigner';
 import { useFhevm } from '../fhevm/useFhevm';
 import { useOraclePrices } from '../core/useOraclePrices';
 import { CONTRACTS } from '../config/contracts';
@@ -20,7 +20,7 @@ import toast from 'react-hot-toast';
 import { normalizeHandle } from '@/lib/utils';
 
 export function ZSwapSimple() {
-  const { ethersSigner: signer, isConnected, connect, provider, chainId } = useMetaMaskEthersSigner();
+  const { ethersSigner: signer, isConnected, connect, provider, chainId, walletType } = useUnifiedWalletSigner();
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
 
   const { instance: fhevmInstance } = useFhevm({
