@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useZSwap } from '../core/useZSwap';
-import { useMetaMaskEthersSigner } from '../core/metamask/useMetaMaskEthersSigner';
+import { useUnifiedWalletSigner } from '../core/wallet/useUnifiedWalletSigner';
 import { CONTRACTS } from '../config/contracts';
 import { useFhevm } from '../fhevm/useFhevm';
 import { ethers } from 'ethers';
@@ -38,17 +38,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { LoadingSpinner } from './ui/loading-spinner';
 
-declare global {
-  interface Window {
-    ethereum?: {
-      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-      isMetaMask?: boolean;
-    };
-  }
-}
-
 export function ZSwapInterface() {
-  const { ethersSigner: signer, isConnected, connect, provider, chainId } = useMetaMaskEthersSigner();
+  const { ethersSigner: signer, isConnected, connect, provider, chainId } = useUnifiedWalletSigner();
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
   
   // Helper function to get token symbol from address
@@ -391,17 +382,17 @@ export function ZSwapInterface() {
   };
 
   const switchToSepolia = async () => {
-    if (!window.ethereum) return;
+    if (!provider) return;
     
     try {
-      await window.ethereum.request({
+      await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0xaa36a7' }],
       });
     } catch (switchError: any) {
       if (switchError.code === 4902) {
         try {
-          await window.ethereum.request({
+          await provider.request({
             method: 'wallet_addEthereumChain',
             params: [{
               chainId: '0xaa36a7',
@@ -448,7 +439,7 @@ export function ZSwapInterface() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <Button onClick={connect} className="w-full" size="lg" variant="default" data-testid="button-connect-wallet">
+            <Button onClick={() => connect()} className="w-full" size="lg" variant="default" data-testid="button-connect-wallet">
               <Wallet className="mr-2 h-[18px] w-[18px]" />
               Connect Wallet
             </Button>
