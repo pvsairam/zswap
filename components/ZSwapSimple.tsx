@@ -18,9 +18,11 @@ import { AlertCircle, ChevronDown, ChevronUp, Wallet, Lock, DollarSign, Zap } fr
 import { Input } from './ui/input';
 import toast from 'react-hot-toast';
 import { normalizeHandle } from '@/lib/utils';
+import { WalletModal } from './WalletModal';
 
 export function ZSwapSimple() {
   const { ethersSigner: signer, isConnected, connect, provider, chainId, walletType } = useUnifiedWalletSigner();
+  const [showWalletModal, setShowWalletModal] = useState(false);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
 
   const { instance: fhevmInstance } = useFhevm({
@@ -338,7 +340,7 @@ export function ZSwapSimple() {
 
                 {/* Connect Wallet Button - Use size variant only */}
                 <Button
-                  onClick={connect}
+                  onClick={() => setShowWalletModal(true)}
                   size="lg"
                   className="w-full text-lg rounded-2xl"
                   data-testid="button-connect-wallet"
@@ -750,6 +752,13 @@ export function ZSwapSimple() {
           </motion.div>
         </div>
       </div>
+      <WalletModal 
+        open={showWalletModal} 
+        onClose={() => setShowWalletModal(false)}
+        onSelectWallet={async (walletType) => {
+          await connect(walletType);
+        }}
+      />
     </div>
   );
 }
